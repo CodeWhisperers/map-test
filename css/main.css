@@ -1,0 +1,28 @@
+@import url('../bower_components/jquery-ui/themes/base/jquery-ui.min.css');
+@import url('../bower_components/d3-floorplan/d3.floorplan.css');
+
+body {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: #fcfcfc;
+    line-height: 1.45em;
+}
+#demo{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+#coords{
+    position:absolute;
+    right: 0;
+    bottom: 0;
+}
+#objectName{
+    position:absolute;
+    right: 0;
+    top: 10px;
+}
+.imagelayer{
+    opacity: 0.7
+}
