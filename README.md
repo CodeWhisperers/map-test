@@ -1,1 +1,5 @@
-first commit
+#Install
+
+```bash
+bower install
+```
