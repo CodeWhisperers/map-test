@@ -65,14 +65,11 @@ $(document).ready(function(){
         svg.attr("height", winHeight).attr("width",winWidth)
             .datum(mapdata).call(map);
 
-        zoom = d3.behavior.zoom();
-        svg.call(zoom);
-        zoom.on('zoom', zoomAction);
-
         svg.on('click', function () {
-            var coord = d3.mouse(this);console.log(zoomLevel);
-            var x = (coord[0]+(tranlateLevel[0]*zoomLevel)) / zoomLevel;
-            var y = (coord[1]+(tranlateLevel[1]*zoomLevel)) / zoomLevel;
+            updateZoom();
+            var coord = d3.mouse(this);
+            var x = tranlateLevel[0]+(coord[0]*(1/zoomLevel));
+            var y = tranlateLevel[1]+(coord[1]*(1/zoomLevel));
             // adjust to zoom
             x = Math.round( (x * xSize) / winWidth * 100  ) / 100;
             y = Math.round( (y * ySize) / calcHeight * 100 ) / 100;
@@ -91,10 +88,6 @@ $(document).ready(function(){
             var x = Math.round( (coord[0] * xSize) / winWidth * 100  ) / 100;
             var y = Math.round( (coord[1] * ySize) / calcHeight * 100 ) / 100;
             $('#coords').text(x+', '+y);
-        });
-
-        svg.on('zoom', function () {
-            console.log(this);
         });
     });
 
@@ -128,18 +121,15 @@ function saveJson()
     });
 }
 
-function zoomAction(x)
+function updateZoom()
 {
-    var newZoom = zoom.scale();
-    var newTranslate = zoom.translate();
-    if (newZoom < 1) {
+    var transform = $(".map-layers").attr('transform');
+    try{
+        var matches = transform.match(/([+-]?\d+(\.\d+)?)/gi);
+        tranlateLevel = [parseFloat(matches[0]),parseFloat(matches[1])];
+        zoomLevel = parseFloat(matches[2]);
+    } catch (err){
         tranlateLevel = [0,0];
         zoomLevel = 1;
-        zoom.scale(zoomLevel);
-        $('.map-layers').attr('transform', null);
-    } else {
-        zoomLevel = newZoom;
-        tranlateLevel = newTranslate;
-        $('.map-layers').attr('transform', 'translate(' + tranlateLevel + ')' + ' scale(' + zoomLevel + ')');
     }
 }
