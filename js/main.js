@@ -11,6 +11,27 @@ var customPathBase = {
     classes: "planned",
     points: []
 };
+var mapdata = [];
+
+var winWidth = $(window).width()-10;
+var winHeight = $(window).height()-10;
+var calcHeight = winWidth / 1.799
+var xSize = 50;
+var ySize = 40;
+
+var xscale,
+    yscale,
+    map,
+    imagelayer,
+    questLayer,
+    heatmap,
+    vectorfield,
+    pathplot,
+//desks = d3.floorplan.pathplot(),
+    overlays;
+
+
+mapLayersConfigs = [];
 
 $(document).ready(function(){
 
@@ -20,31 +41,22 @@ $(document).ready(function(){
     var xSize = 50;
     var ySize = 40;
 
-    var xscale = d3.scale.linear()
+    xscale = d3.scale.linear()
             .domain([0,xSize])
-            .range([0,winWidth]),
+            .range([0,winWidth]);
         yscale = d3.scale.linear()
             .domain([0,ySize])
             .range([0,/*winHeight*/ calcHeight]),
-        map = d3.floorplan().xScale(xscale).yScale(yscale),
-        imagelayer = d3.floorplan.imagelayer(),
-        heatmap = d3.floorplan.heatmap(),
-        vectorfield = d3.floorplan.vectorfield(),
-        pathplot = d3.floorplan.pathplot(),
+        map = d3.floorplan().xScale(xscale).yScale(yscale);
+    imagelayer = d3.floorplan.imagelayer();
+    questLayer = d3.floorplan.imagelayer();
+        heatmap = d3.floorplan.heatmap();
+        vectorfield = d3.floorplan.vectorfield();
+        pathplot = d3.floorplan.pathplot();
     //desks = d3.floorplan.pathplot(),
-        overlays = d3.floorplan.overlays().editMode(true),
-        mapdata = {};
+        overlays = d3.floorplan.overlays().editMode(true);
 
-    mapdata[imagelayer.id()] = [{
-        url: 'img/etaj_1.PNG',
-        x: 0,
-        y: 0,
-        height: ySize,
-        width: xSize,
-        opacity: 0.7
-    }];
-
-    map.addLayer(imagelayer)
+    map
         //.addLayer(heatmap)
         //.addLayer(vectorfield)
         .addLayer(pathplot)
@@ -52,7 +64,19 @@ $(document).ready(function(){
         //.addLayer(desks)
     ;
 
+
     d3.json("data/map.json", function(data) {
+
+        for (mapIndex in data.imageLayerMaps) {
+            mapLayerConfig = data.imageLayerMaps[mapIndex];
+            mapLayersConfigs[mapLayerConfig.id] = mapLayerConfig;
+        }
+
+        initMapLayer();
+
+        map.addLayer(imagelayer);
+        map.addLayer(questLayer);
+
         json = data;
         mapdata[heatmap.id()] = data.heatmap;
         mapdata[overlays.id()] = data.overlays;
@@ -74,7 +98,6 @@ $(document).ready(function(){
             x = Math.round( (x * xSize) / winWidth * 100  ) / 100;
             y = Math.round( (y * ySize) / calcHeight * 100 ) / 100;
 
-
             var crtPathName = $('#objName').val();
             var crtPath = getCrtPath(crtPathName);
             crtPath.points.push({x:x,y:y});
@@ -88,6 +111,32 @@ $(document).ready(function(){
             var x = Math.round( (coord[0] * xSize) / winWidth * 100  ) / 100;
             var y = Math.round( (coord[1] * ySize) / calcHeight * 100 ) / 100;
             $('#coords').text(x+', '+y);
+        });
+    });
+
+    $('#map-selector').change(function(){
+        layerId = $(this).val();
+        initMapLayer(layerId);
+    });
+
+    $('#quest-selector').change(function(){
+
+        var questId = $(this).val();
+
+        console.log(questId);
+
+        $.ajax({
+            url:"getQuest.php",
+            data: {
+                questId: questId
+            },
+            method: "POST",
+            dataType: "json",
+            success: function (data) {
+                for (index in data.mapPoints) {
+                    var pointConfig = data.mapPoints[index];
+                }
+            }
         });
     });
 
@@ -131,5 +180,27 @@ function updateZoom()
     } catch (err){
         tranlateLevel = [0,0];
         zoomLevel = 1;
+    }
+}
+
+function initMapLayer(id) {
+
+    if (typeof id == "undefined") {
+        id = 1;
+    }
+
+    var mapLayerConfig = mapLayersConfigs[id];
+
+    mapdata[imagelayer.id()] = [{
+        url: mapLayerConfig.src,
+        x: 0,
+        y: 0,
+        height: ySize,
+        width: xSize,
+        opacity: 0.7
+    }];
+
+    if (typeof svg != "undefined") {
+        svg.call(map);
     }
 }
