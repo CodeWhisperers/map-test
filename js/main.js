@@ -204,35 +204,25 @@ function renderMapLayer(mapId) {
 
 function getQuestConfigs() {
 
-    var questsNr = $('#quest-selector option').length;
-    var questsCounter = 0;
-
-    $('#quest-selector option').each(function(index, object){
-        var questId = $(object).val();
-        starOverlays = new Array();
-        $.ajax({
-            url:"getQuest.php",
-            data: {
-                questId: questId
-            },
-            method: "POST",
-            dataType: "json",
-            success: function (data) {
-                questConfigs[questId] = data;
-                questsCounter++;
-                if (questsCounter == questsNr) {
-                    drawQuestPoints();
-                }
-            }
-        });
+    $.ajax({
+        url:"getQuest.php",
+        data: {
+            questId: 'quests'
+        },
+        method: "POST",
+        dataType: "json",
+        success: function (data) {
+            questConfigs = data;
+            drawQuestPoints();
+        }
     });
 ;
 }
 
 function drawQuestPoints () {
 
-
     for (var questIndex in questConfigs) {
+
 
         var questConfig = questConfigs[questIndex];
 
@@ -247,19 +237,19 @@ function drawQuestPoints () {
                 y: point.y,
                 width:1,
                 height:1,
-                opacity: 1
+                opacity: 1,
+                class: "points"
             }];
 
-            questConfigs[questIndex].points[pointsIndex].overlayId = imagelayer.id();
+            questConfigs[questIndex].points[pointsIndex].id = imagelayer.id();
 
             svg.call(map);
 
-            jqStar = $('.'+point.overlayId+' image');
+            jqStar = $('.'+point.id+' image');
             jqStar
                 .css('width', '20px')
                 .css('height', '20px')
                 .css('visibility', 'hidden');
-
         }
 
     }
@@ -270,15 +260,18 @@ function drawQuestPoints () {
 
 function updateQuestPoints(questId) {
 
-    //console.log(questId);
-
     var questConfig = questConfigs[questId];
 
-    console.log(questConfig);
-
+    for (var quest in questConfigs) {
+        for (var pointIndex in questConfigs[quest].points) {
+            $('.'+questConfigs[quest].points[pointIndex].id+' image').css('visibility', 'hidden');
+        }
+    }
 
     for (var index in questConfig.points) {
         var point = questConfig.points[index];
-        $('.'+point.overlayId+' image').css('visibility', 'visible');
+        if (currentMap == point.mapId) {
+            $('.'+point.id+' image').css('visibility', 'visible');
+        }
     }
 }
