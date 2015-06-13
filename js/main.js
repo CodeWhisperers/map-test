@@ -28,7 +28,13 @@ var xscale,
     vectorfield,
     pathplot,
 //desks = d3.floorplan.pathplot(),
-    overlays;
+    overlays,
+    currentMap,
+    starOverlays;
+
+
+var questConfigs = {},
+    mapsConfigs;
 
 
 mapLayersConfigs = [];
@@ -72,7 +78,9 @@ $(document).ready(function(){
             mapLayersConfigs[mapLayerConfig.id] = mapLayerConfig;
         }
 
-        initMapLayer();
+
+        getQuestConfigs();
+        renderMapLayer();
 
         map.addLayer(imagelayer);
         map.addLayer(questLayer);
@@ -114,30 +122,8 @@ $(document).ready(function(){
         });
     });
 
-    $('#map-selector').change(function(){
-        layerId = $(this).val();
-        initMapLayer(layerId);
-    });
-
-    $('#quest-selector').change(function(){
-
-        var questId = $(this).val();
-
-        console.log(questId);
-
-        $.ajax({
-            url:"getQuest.php",
-            data: {
-                questId: questId
-            },
-            method: "POST",
-            dataType: "json",
-            success: function (data) {
-                for (index in data.mapPoints) {
-                    var pointConfig = data.mapPoints[index];
-                }
-            }
-        });
+    $('#map-selector, #quest-selector').change(function(){
+        renderQuest($('#map-selector').val(), $('#quest-selector').val());
     });
 
 
@@ -183,13 +169,22 @@ function updateZoom()
     }
 }
 
-function initMapLayer(id) {
+function renderQuest(mapId, questId) {
+    renderMapLayer(mapId);
+    updateQuestPoints(questId);
+}
 
-    if (typeof id == "undefined") {
-        id = 1;
+function renderMapLayer(mapId) {
+
+    /**
+     * @todo: find a better way to define default map
+     */
+    if (typeof mapId == "undefined") {
+        mapId = 1;
     }
 
-    var mapLayerConfig = mapLayersConfigs[id];
+    /** Rendering map*/
+    var mapLayerConfig = mapLayersConfigs[mapId];
 
     mapdata[imagelayer.id()] = [{
         url: mapLayerConfig.src,
@@ -202,5 +197,88 @@ function initMapLayer(id) {
 
     if (typeof svg != "undefined") {
         svg.call(map);
+    }
+
+    currentMap = mapId;
+}
+
+function getQuestConfigs() {
+
+    var questsNr = $('#quest-selector option').length;
+    var questsCounter = 0;
+
+    $('#quest-selector option').each(function(index, object){
+        var questId = $(object).val();
+        starOverlays = new Array();
+        $.ajax({
+            url:"getQuest.php",
+            data: {
+                questId: questId
+            },
+            method: "POST",
+            dataType: "json",
+            success: function (data) {
+                questConfigs[questId] = data;
+                questsCounter++;
+                if (questsCounter == questsNr) {
+                    drawQuestPoints();
+                }
+            }
+        });
+    });
+;
+}
+
+function drawQuestPoints () {
+
+
+    for (var questIndex in questConfigs) {
+
+        var questConfig = questConfigs[questIndex];
+
+        for (var pointsIndex in questConfig.points) {
+
+            var point = questConfig.points[pointsIndex];
+            var imagelayer = d3.floorplan.imagelayer();
+            map.addLayer(imagelayer);
+            mapdata[imagelayer.id()] = [{
+                url: "img/star.png",
+                x: point.x,
+                y: point.y,
+                width:1,
+                height:1,
+                opacity: 1
+            }];
+
+            questConfigs[questIndex].points[pointsIndex].overlayId = imagelayer.id();
+
+            svg.call(map);
+
+            jqStar = $('.'+point.overlayId+' image');
+            jqStar
+                .css('width', '20px')
+                .css('height', '20px')
+                .css('visibility', 'hidden');
+
+        }
+
+    }
+
+    updateQuestPoints($('#quest-selector').val());
+
+}
+
+function updateQuestPoints(questId) {
+
+    //console.log(questId);
+
+    var questConfig = questConfigs[questId];
+
+    console.log(questConfig);
+
+
+    for (var index in questConfig.points) {
+        var point = questConfig.points[index];
+        $('.'+point.overlayId+' image').css('visibility', 'visible');
     }
 }
