@@ -21,8 +21,13 @@ body {
 #objectName{
     position:absolute;
     right: 0;
-    top: 10px;
+    top: 50px;
 }
 .imagelayer{
     opacity: 0.7
+}
+
+#map-selector,
+#quest-selector {
+    margin-top:20px;
 }

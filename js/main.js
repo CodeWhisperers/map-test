@@ -41,6 +41,7 @@ mapLayersConfigs = [];
 
 $(document).ready(function(){
 
+
     var winWidth = $(window).width()-10;
     var winHeight = $(window).height()-10;
     var calcHeight = winWidth / 1.799
@@ -69,7 +70,6 @@ $(document).ready(function(){
         //.addLayer(overlays)
         //.addLayer(desks)
     ;
-
 
     d3.json("data/map.json", function(data) {
 
@@ -121,6 +121,8 @@ $(document).ready(function(){
             $('#coords').text(x+', '+y);
         });
     });
+
+    //$('#map-selector').selectmenu();
 
     $('#map-selector, #quest-selector').change(function(){
         renderQuest($('#map-selector').val(), $('#quest-selector').val());
@@ -223,8 +225,8 @@ function drawQuestPoints () {
 
     for (var questIndex in questConfigs) {
 
-
         var questConfig = questConfigs[questIndex];
+
 
         for (var pointsIndex in questConfig.points) {
 
@@ -275,3 +277,7 @@ function updateQuestPoints(questId) {
         }
     }
 }
+
+$(function(){
+    $('#quest-selector').selectmenu();
+});

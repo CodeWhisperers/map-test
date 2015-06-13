@@ -1,0 +1,28 @@
+{
+  "quest1": {
+    "points": [
+      {
+        "x": "3",
+        "y": "8",
+        "mapId": 1,
+        "id":null
+      },
+      {
+        "x": "2",
+        "y": "9",
+        "mapId": 2,
+        "id":null
+      }
+    ]
+  },
+  "quest2": {
+    "points": [
+      {
+        "x": "4",
+        "y": "4",
+        "mapId": 1,
+        "id":null
+      }
+    ]
+  }
+}
