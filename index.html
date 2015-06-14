@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,11 +19,6 @@
     <!-- Bootstrap core CSS -->
     <link href="assets/styles/app.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
 </head>
 <!-- NAVBAR
@@ -53,7 +52,8 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="quests.html"><i class="fa fa-star"></i> Quests</a></li>
                         <li><a href="profile.html"><i class="fa fa-user"></i> Profile</a></li>
-                        <li><a href="#"><i class="fa fa-qrcode"></i> QR Reader</a></li>
+                        <li><a href="scan.html"><i class="fa fa-qrcode"></i> QR Reader</a></li>
+                        <li><a href="generate.html"><i class="fa fa-qrcode"></i> QR Generator</a></li>
                         <li><a href="map.html"><i class="fa fa-street-view"></i> Map</a></li>
                     </ul>
                 </div>
@@ -65,9 +65,9 @@
     <!-- CONTENT -->
     <div class="main-quest">
 
-        <i class="fa fa-bed fa-5x"></i>
-        <h1>Find HR - 100 EXP</h1>
-        <p class="lead">Try to find the HR location</p>
+        <input type="text" id="email" />
+        <div id="login" class="btn btn-primary">LOGIN</div>
+        <p class="lead">Please Login</p>
 
     </div>
     <!-- //CONTENT// -->
@@ -79,11 +79,17 @@
 </footer>
 <!-- //FOOTER// -->
 
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.min.js"></script>
+
+
 </body>
 </html>

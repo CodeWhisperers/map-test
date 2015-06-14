@@ -78,6 +78,7 @@ $(document).ready(function(){
             mapLayersConfigs[mapLayerConfig.id] = mapLayerConfig;
         }
 
+
         getQuestConfigs();
         renderMapLayer();
 
@@ -88,7 +89,7 @@ $(document).ready(function(){
         mapdata[heatmap.id()] = data.heatmap;
         mapdata[overlays.id()] = data.overlays;
         mapdata[vectorfield.id()] = data.vectorfield;
-        //paths = data.pathplot;
+        paths = data.pathplot;
         //mapdata[pathplot.id()] = paths;
         //mapdata[desks.id()] = data.desks;
 
@@ -96,6 +97,22 @@ $(document).ready(function(){
         svg.attr("height", winHeight).attr("width",winWidth)
             .datum(mapdata).call(map);
 
+        //svg.on('click', function () {
+        //    updateZoom();
+        //    var coord = d3.mouse(this);
+        //    var x = tranlateLevel[0]+(coord[0]*(1/zoomLevel));
+        //    var y = tranlateLevel[1]+(coord[1]*(1/zoomLevel));
+        //    // adjust to zoom
+        //    x = Math.round( (x * xSize) / winWidth * 100  ) / 100;
+        //    y = Math.round( (y * ySize) / calcHeight * 100 ) / 100;
+        //
+        //    var crtPathName = $('#objName').val();
+        //    var crtPath = getCrtPath(crtPathName);
+        //    crtPath.points.push({x:x,y:y});
+        //    //console.log(paths);
+        //    console.log(JSON.stringify(paths));
+        //    svg.datum(mapdata).call(map);
+        //});
 
         //svg.on('mousemove', function () {
         //    var coord = d3.mouse(this);
@@ -260,7 +277,3 @@ function updateQuestPoints(questId) {
         }
     }
 }
-
-$(function(){
-    $('#quest-selector').selectmenu();
-});
